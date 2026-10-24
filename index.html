@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Villager0090818">
+    <title>Test web-site</title>
+    <style>
+        .lines{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background-size: 40px 40px;
+            background-image:
+                    linear-gradient(to right,rgba(0,255,0,1) 1px,transparent 1px),
+                    linear-gradient(to bottom,rgba(0,255,0,1) 1px,transparent 1px);
+            animation: fly-lines 4.8s infinite alternate;
+            filter: drop-shadow(0px 0px 5px rgba(0, 255,0, 0.7));
+            filter: blur(2px);
+        }
+        body{
+            background-position: center;
+            background-attachment: fixed;
+            background-size:cover;
+            z-index: 2;
+            background-color: black;
+            color: rgba(0,255,0,0.5);
+        }
+        h1,h2,h3,h4,h5,h6,input,hr{
+            background-color: rgba(0,0,0,0.5);
+            border: none;
+            border-radius: 10px;
+            text-shadow: 5px 5px 5px #000000;
+            padding: 6px 6px;
+        }
+        body.has-bg .lines {
+            display: none;
+        }
+        hr{
+            width: 97vw;
+            position: absolute;
+            animation: hr-scale 1s infinite normal;
+        }
+        button:hover{
+            transition: all 0.5s;
+            transform: scale(1.2);
+        }
+        @keyframes hr-scale {
+            0%{
+                height: 10px;
+            }
+            50%{
+                height: 5px;
+            }
+            100%{
+                height: 2px;
+            }
+        }
+        @keyframes fly-lines {
+            0%{
+                background-position: 0 0;
+            }
+            25%{
+                background-position: 100px 0;
+            }
+            50%{
+                background-position: 100px 100px;
+            }
+            75%{
+                background-position: 0 100px;
+            }
+            100%{
+                background-position: 0 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+<dev class="lines"></dev>
+<h1 class="colorReplace">Здесь вы можете написать свою HTML страницу</h1>
+
+<hr  class="colorReplace" style="height: 10px;background-color: rgba(0,255,0,0.5);border: none">
+<br>
+<br>
+<br>
+
+<textarea class="colorReplace"
+        rows="20"
+        cols="80"
+        id="htmlcode"
+        style=
+                "
+                background-color: rgba(0,0,0,0.5);
+                color: #0F0;
+                border: none
+                ">
+
+
+<!--Всем привет от создателя (Влада)-->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+   <meta charset="UTF-8">
+   <meta name="author" content="Villager0090818">
+   <title>Test web-site</title>
+</head>
+<body>
+
+</body>
+</html>
+
+
+        </textarea>
+
+<br>
+<button
+        style=
+                "
+                        background-color: rgba(0,255,0,0.4);
+                        border-radius: 9px;
+                        padding: 5px 15px;
+                        color: white;
+                "
+        title="У вас откроется вкладка с вашей веб страницей" id="open">
+    <strong style="color: white">Нажмите для тестирования</strong>
+</button>
+
+
+
+<button
+        style=
+                "
+                    background-color: rgba(0,255,0,0.4);
+                    border-radius: 10px;
+                    padding: 5px 15px;
+                    color: white;
+                "
+        title="Скачать веб страницу" id="safe">
+    <strong style="color: white">Установить</strong>
+</button>
+
+
+<h3 class="colorReplace">
+    Можете выбрать обои на фон и цвет слов <small>(которые пропадут после обновления страницы)</small>
+</h3>
+
+<input type="file" id="oboi" class="colorReplace">
+
+<input type="color" id="wordcolor" class="colorReplace" value="#00FF00">
+
+<button style=
+                "
+                    background-color: rgba(0,255,0,0.4);
+                    border-radius: 10px;
+                    padding: 5px 15px;
+                    color: white;
+                "
+        id="oboiset">Установить</button>
+
+
+
+
+
+
+
+
+<script>
+
+    const buttonOPEN = document.querySelector('#open');
+
+    let codeHTML = document.querySelector('#htmlcode').value;
+
+    let blob = new Blob([codeHTML], {type: "text/html;charset=utf-8"});
+
+    let blobURL = URL.createObjectURL(blob);
+
+    const buttonSafe = document.querySelector('#safe');
+
+    const fileOboi = document.querySelector('#oboi');
+
+    const buttonOboi = document.querySelector('#oboiset');
+
+    const replaceColor = document.querySelectorAll('.colorReplace');
+
+    const color = document.querySelector('#wordcolor');
+    <!--Метод обновления информации о тексте и тд-->
+    function updateInfo() {
+        codeHTML = document.querySelector('#htmlcode').value;
+
+        blob = new Blob([codeHTML], {type: "text/html;charset=utf-8"});
+
+        blobURL = URL.createObjectURL(blob);
+    }
+
+    function LogicButtonOpen() {
+
+        updateInfo();
+
+        const newWindow = window.open(blobURL, '_blank');
+
+        setTimeout(() => URL.revokeObjectURL(blobURL), 1000);
+
+    }
+
+    function SafeButton() {
+        const link = document.createElement('a');
+        link.href = blobURL;
+        link.download = "my_new_page.html";
+        link.click();
+    }
+
+    buttonOPEN.addEventListener(('click'), () => {
+        LogicButtonOpen();
+    });
+
+    buttonSafe.addEventListener(('click'), () => {
+        SafeButton();
+    });
+
+    buttonOboi.addEventListener('click', () => {
+
+        const fr = new FileReader();
+        replaceColor.forEach((element)=>{
+            element.style.color = color.value;
+            if(element.tagName === 'HR'){
+                element.style.setProperty('background-color', color.value, 'important');
+            }
+        })
+
+        fr.onload = function (e) {
+            const result = e.target.result;
+            document.body.style.backgroundImage = `url('${result}')`;
+            document.body.classList.add('has-bg');
+            console.log(link)
+        };
+
+        if(fileOboi.files[0] != null)
+        fr.readAsDataURL(fileOboi.files[0])
+    })
+
+</script>
+</body>
+</html>
