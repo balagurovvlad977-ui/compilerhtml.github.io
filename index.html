@@ -207,6 +207,7 @@
     }
 
     function SafeButton() {
+        updateInfo();
         const link = document.createElement('a');
         link.href = blobURL;
         link.download = "my_new_page.html";
@@ -223,7 +224,7 @@
 
     buttonOboi.addEventListener('click', () => {
 
-        const fr = new FileReader();
+        let fr = new FileReader();
         replaceColor.forEach((element)=>{
             element.style.color = color.value;
             if(element.tagName === 'HR'){
@@ -232,7 +233,7 @@
         })
 
         fr.onload = function (e) {
-            const result = e.target.result;
+            let result = e.target.result;
             document.body.style.backgroundImage = `url('${result}')`;
             document.body.classList.add('has-bg');
             console.log(link)
