@@ -19,14 +19,22 @@
             animation: fly-lines 4.8s infinite alternate;
             filter: drop-shadow(0px 0px 5px rgba(0, 255,0, 0.7));
             filter: blur(2px);
+
+            transition: opacity 0.3s,visibility 0.3s;
+        }
+        .lines-off{
+            opacity: 0;
+            visibility: hidden;
         }
         body{
+            background-image: linear-gradient(0deg, #020, #000);
             background-position: center;
             background-attachment: fixed;
             background-size:cover;
             z-index: 2;
             background-color: black;
             color: rgba(0,255,0,0.5);
+            transition: background-image 0.5s ease-in-out;
         }
         h1,h2,h3,h4,h5,h6,input,hr{
             background-color: rgba(0,0,0,0.5);
@@ -34,18 +42,34 @@
             border-radius: 10px;
             text-shadow: 5px 5px 5px #000000;
             padding: 6px 6px;
+            transition: all 0.5s;
         }
         body.has-bg .lines {
             display: none;
         }
         hr{
+            height: 10px;
+            background-color: rgba(0,255,0,0.5);
+            border: none;
             width: 97vw;
             position: absolute;
             animation: hr-scale 1s infinite normal;
         }
-        button:hover{
-            transition: all 0.5s;
-            transform: scale(1.2);
+        button:hover,input:hover{
+            transform: scale(1.1);
+            box-shadow: 0 0 0 1px white;
+            background-color: rgba(0,0,0,0.7);
+        }
+        button:active{
+            transform: scale(0.9);
+        }
+        button{
+            background-color: rgba(0,0,0,0.5);
+            border-radius: 9px;
+            padding: 5px 15px;
+            color: white;
+            border: none;
+            transition: all 0.3s;
         }
         @keyframes hr-scale {
             0%{
@@ -57,6 +81,9 @@
             100%{
                 height: 2px;
             }
+        }
+        h6{
+            filter: blur(1px)
         }
         @keyframes fly-lines {
             0%{
@@ -79,21 +106,20 @@
 </head>
 <body>
 
-
 <dev class="lines"></dev>
 <h1 class="colorReplace">Здесь вы можете написать свою HTML страницу</h1>
 
-<hr  class="colorReplace" style="height: 10px;background-color: rgba(0,255,0,0.5);border: none">
+<hr  class="colorReplace">
 <br>
 <br>
 <br>
 
 <textarea class="colorReplace"
-        rows="20"
-        cols="80"
-        id="htmlcode"
-        style=
-                "
+          rows="20"
+          cols="80"
+          id="htmlcode"
+          style=
+                  "
                 background-color: rgba(0,0,0,0.5);
                 color: #0F0;
                 border: none
@@ -117,29 +143,13 @@
         </textarea>
 
 <br>
-<button
-        style=
-                "
-                        background-color: rgba(0,255,0,0.4);
-                        border-radius: 9px;
-                        padding: 5px 15px;
-                        color: white;
-                "
-        title="У вас откроется вкладка с вашей веб страницей" id="open">
+<button title="У вас откроется вкладка с вашей веб страницей" id="open">
     <strong style="color: white">Нажмите для тестирования</strong>
 </button>
 
 
 
-<button
-        style=
-                "
-                    background-color: rgba(0,255,0,0.4);
-                    border-radius: 10px;
-                    padding: 5px 15px;
-                    color: white;
-                "
-        title="Скачать веб страницу" id="safe">
+<button title="Скачать веб страницу" id="safe">
     <strong style="color: white">Установить</strong>
 </button>
 
@@ -152,41 +162,79 @@
 
 <input type="color" id="wordcolor" class="colorReplace" value="#00FF00">
 
-<button style=
-                "
-                    background-color: rgba(0,255,0,0.4);
-                    border-radius: 10px;
-                    padding: 5px 15px;
-                    color: white;
-                "
-        id="oboiset">Установить</button>
+<button id="oboiset">Установить</button>
 
+<button id="reset">Растворить сетку на фоне</button>
 
+<br>
+<h3 class="colorReplace">Ползунки для блюра сетки и градиента на фоне</h3>
+<table>
 
+    <td>
+        <input class="blur" type="range" min="0" max="100" value="2" title="Ползунок блюра">
 
-
+        <input class="gradient" type="range" min="0" max="15" value="2" title="Ползунок градиента">
+    </td>
+</table>
 
 
 
 <script>
 
+
+
+
+    if(window.screen.width <= 1000){
+        document.querySelector('.lines').style.animation = 'none';
+        document.querySelector('hr').style.animation = 'none';
+    }
+
+
+
     const buttonOPEN = document.querySelector('#open');
 
-    let codeHTML = document.querySelector('#htmlcode').value;
+
+    const resetButton = document.querySelector('#reset')
+
+
+    let codeHTML = document.querySelector('#htmlcode');
+
+
 
     let blob = new Blob([codeHTML], {type: "text/html;charset=utf-8"});
 
+
+
     let blobURL = URL.createObjectURL(blob);
+
+
 
     const buttonSafe = document.querySelector('#safe');
 
+
+
     const fileOboi = document.querySelector('#oboi');
+
+
+    const blur = document.querySelector('.blur');
+
+
+    const gradient = document.querySelector('.gradient');
+
+
 
     const buttonOboi = document.querySelector('#oboiset');
 
+
+
     const replaceColor = document.querySelectorAll('.colorReplace');
 
+
+
     const color = document.querySelector('#wordcolor');
+
+
+
     <!--Метод обновления информации о тексте и тд-->
     function updateInfo() {
         codeHTML = document.querySelector('#htmlcode').value;
@@ -195,6 +243,67 @@
 
         blobURL = URL.createObjectURL(blob);
     }
+
+
+    let off = false;
+    resetButton.addEventListener('click',()=>{
+        document.body.querySelector('.lines').classList.toggle('lines-off');
+        off = !off;
+        if(off)
+            resetButton.textContent = "Выявить сетку"
+        else
+            resetButton.textContent = "Растворить сетку на фоне"
+    })
+
+
+
+    document.getElementById('htmlcode').addEventListener('keydown', function(e) {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+
+            const spaces = '     ';
+
+            this.value = this.value.substring(0, start) + spaces + this.value.substring(end);
+
+            this.selectionStart = this.selectionEnd = start + spaces.length;
+        }
+    });
+
+
+
+
+
+    const saveCode = localStorage.getItem('compiler.html.code')
+    if(saveCode != null && saveCode != 'undefined'){
+        codeHTML.value = saveCode;
+    }
+
+
+
+    codeHTML.addEventListener('input', () => {
+        localStorage.setItem('compiler.html.code', codeHTML.value);
+    });
+
+
+
+
+    gradient.addEventListener('input',()=>{
+        const color = Number(gradient.value).toString(16);
+        document.body.style.backgroundImage = 'linear-gradient(0deg, #0' + color + '0, #000)';
+    })
+
+
+
+    blur.addEventListener('input',()=>{
+        document.querySelector('.lines').style.filter = 'blur(' + blur.value + 'px)';
+    })
+
+
+
+
 
     function LogicButtonOpen() {
 
@@ -206,6 +315,10 @@
 
     }
 
+
+
+
+
     function SafeButton() {
         updateInfo();
         const link = document.createElement('a');
@@ -214,13 +327,23 @@
         link.click();
     }
 
+
+
+
     buttonOPEN.addEventListener(('click'), () => {
         LogicButtonOpen();
     });
 
+
+
+
     buttonSafe.addEventListener(('click'), () => {
         SafeButton();
     });
+
+
+
+
 
     buttonOboi.addEventListener('click', () => {
 
@@ -240,7 +363,7 @@
         };
 
         if(fileOboi.files[0] != null)
-        fr.readAsDataURL(fileOboi.files[0])
+            fr.readAsDataURL(fileOboi.files[0])
     })
 
 </script>
