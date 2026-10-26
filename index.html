@@ -233,8 +233,6 @@
 
     const color = document.querySelector('#wordcolor');
 
-
-
     <!--Метод обновления информации о тексте и тд-->
     function updateInfo() {
         codeHTML = document.querySelector('#htmlcode').value;
@@ -242,6 +240,7 @@
         blob = new Blob([codeHTML], {type: "text/html;charset=utf-8"});
 
         blobURL = URL.createObjectURL(blob);
+
     }
 
 
@@ -257,7 +256,7 @@
 
 
 
-    document.getElementById('htmlcode').addEventListener('keydown', function(e) {
+    codeHTML.addEventListener('keydown', function(e) {
         if (e.key === 'Tab') {
             e.preventDefault();
 
@@ -283,9 +282,48 @@
 
 
 
-    codeHTML.addEventListener('input', () => {
+    let on = false;
+    let prov = "";
+
+    codeHTML.addEventListener('input', (e) => {
+        let nowChar = e.data;
+
+        if (nowChar === "<") {
+            on = true;
+        }if (on) {
+            if (nowChar) {
+                prov = prov + nowChar;
+            }
+        }if (nowChar === ">" && on) {
+            let cleanTag = prov.replace("<", "").replace(">", "").trim();
+
+            let tagName = cleanTag.split(" ")[0];
+
+
+            if (!tagName.startsWith("/")) {
+
+                let closingTag = "</" + tagName + ">";
+
+                const cursorPos = codeHTML.selectionStart;
+
+                const textBefore = codeHTML.value.substring(0, cursorPos);
+                const textAfter = codeHTML.value.substring(cursorPos);
+
+                codeHTML.value = textBefore + closingTag + textAfter;
+
+                codeHTML.selectionStart = cursorPos;
+                codeHTML.selectionEnd = cursorPos;
+            }
+
+            on = false;
+            prov = "";
+        }
+
+        if (!on) prov = "";
+
         localStorage.setItem('compiler.html.code', codeHTML.value);
     });
+
 
 
 
@@ -323,6 +361,7 @@
         updateInfo();
         const link = document.createElement('a');
         link.href = blobURL;
+
         link.download = "my_new_page.html";
         link.click();
     }
@@ -357,7 +396,8 @@
 
         fr.onload = function (e) {
             let result = e.target.result;
-            document.body.style.backgroundImage = `url('${result}')`;
+            result = `url('${result}')`;
+            document.body.style.backgroundImage = result;
             document.body.classList.add('has-bg');
             console.log(link)
         };
