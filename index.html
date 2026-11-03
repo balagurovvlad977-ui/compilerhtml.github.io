@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Villager0090818">
-    <title>Test web-site</title>
+    <title>Compiler web-site</title>
     <style>
         .lines{
             position: fixed;
@@ -286,41 +286,6 @@
     let prov = "";
 
     codeHTML.addEventListener('input', (e) => {
-        let nowChar = e.data;
-
-        if (nowChar === "<") {
-            on = true;
-        }if (on) {
-            if (nowChar) {
-                prov = prov + nowChar;
-            }
-        }if (nowChar === ">" && on) {
-            let cleanTag = prov.replace("<", "").replace(">", "").trim();
-
-            let tagName = cleanTag.split(" ")[0];
-
-
-            if (!tagName.startsWith("/")) {
-
-                let closingTag = "</" + tagName + ">";
-
-                const cursorPos = codeHTML.selectionStart;
-
-                const textBefore = codeHTML.value.substring(0, cursorPos);
-                const textAfter = codeHTML.value.substring(cursorPos);
-
-                codeHTML.value = textBefore + closingTag + textAfter;
-
-                codeHTML.selectionStart = cursorPos;
-                codeHTML.selectionEnd = cursorPos;
-            }
-
-            on = false;
-            prov = "";
-        }
-
-        if (!on) prov = "";
-
         localStorage.setItem('compiler.html.code', codeHTML.value);
     });
 
